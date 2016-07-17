@@ -51,7 +51,7 @@ namespace TicketVendorSystem
             //var watch1 = System.Diagnostics.Stopwatch.StartNew();
             // the code that you want to measure comes here
 
-            const int NumberOfResults = 5;
+
 
             try
             {
@@ -115,7 +115,7 @@ namespace TicketVendorSystem
 
                 foreach (var ol in orderedList)
                 {
-                    if (processed++ == NumberOfResults)
+                    if (processed++ == Constants.NumberOfResults)
                     {
                         break;
                     }
