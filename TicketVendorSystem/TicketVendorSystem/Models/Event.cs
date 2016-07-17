@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TicketVendorSystem.Models
 {
-    class Event
+    public class Event
     {
         public String ID { get; set; }
 

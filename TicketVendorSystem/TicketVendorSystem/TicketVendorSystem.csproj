@@ -44,8 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\RandomGenerators.cs" />
     <Compile Include="Models\Coords.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

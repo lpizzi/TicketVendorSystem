@@ -51,15 +51,13 @@ namespace TicketVendorSystem
             //var watch1 = System.Diagnostics.Stopwatch.StartNew();
             // the code that you want to measure comes here
 
-
-
             try
             {
                 //Map Creation
-                List<Coords> worldMap = new List<Coords>();
-
+                Map worldMap = new Map();
+                
                 //Random generation of seed data 
-                worldMap = RandomDataGenerator();
+                worldMap.RandomDataGenerator();
 
                 //watch1.Stop();
                 //var elapsedMs = watch1.ElapsedMilliseconds;
@@ -93,7 +91,7 @@ namespace TicketVendorSystem
                 userY = userCoordsArray[1];
 
                 //User input evaluation with all the points
-                Dictionary<Coords, Double> events = new Dictionary<Coords, Double>();
+                Dictionary<KeyValuePair<Coords, Event>, Double> events = new Dictionary<KeyValuePair<Coords, Event>, Double>();
                 events = DistanceEvaluation(userX, userY, ref worldMap);
 
                 System.Console.WriteLine("Closest event to: ({0}): ", userXY);
@@ -103,7 +101,7 @@ namespace TicketVendorSystem
                 var orderedList = events.OrderBy(x => x.Value).ToList();
 
                 //Removing from the view all the Events without available tickets
-                orderedList.RemoveAll(x => x.Key.Event.Tickets.Count() == 0);
+                orderedList.RemoveAll(x => x.Key.Value.Tickets.Count() == 0);
 
                 //var ticketLowPrices =
                 //        from ordered in events
@@ -121,14 +119,14 @@ namespace TicketVendorSystem
                     }
 
                     //Selection of the cheapest event ticket
-                    var ticketLowPrice = ol.Key.Event.Tickets.Min(entry => entry.Price);
+                    var ticketLowPrice = ol.Key.Value.Tickets.Min(entry => entry.Price);
 
 
                     System.Console.WriteLine("Event {0} - Cheapest Ticket: ${1:0.00} at ({2},{3}) distance: {4:0} ",
-                        ol.Key.Event.ID,
+                        ol.Key.Value.ID,
                         ticketLowPrice,
-                        ol.Key.Event.Place.x,
-                        ol.Key.Event.Place.y,
+                        ol.Key.Value.Place.x,
+                        ol.Key.Value.Place.y,
                         ol.Value
                     );
 
@@ -148,98 +146,6 @@ namespace TicketVendorSystem
 
         }
 
-
-        /// <summary>
-        /// Random String Generation
-        /// </summary>
-        /// <param name="length">Lenght of the desidered random String</param>
-        /// <param name="random">Random object</param>
-        /// <returns>A random string generated based on the specified characteristics</returns>
-        public static string RandomString(int length, Random random)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-
-        }
-
-        /// <summary>
-        /// Random Value Generation
-        /// </summary>
-        /// <param name="length">Lenght of the desidered maxinum price</param>
-        /// <param name="random">Random object</param>
-        /// <returns>A random price generated based on the specified characteristics</returns>
-        public static string RandomPrice(int length, Random random)
-        {
-            const string chars = "0123456789";
-
-            var randomPrice = new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-
-            if (randomPrice == "00") randomPrice = "0.99";
-
-            return randomPrice;
-
-        }
-
-        /// <summary>
-        /// Random Value Generation
-        /// </summary>
-        /// <param name="length">Lenght of the desidered string</param>
-        /// <param name="value">The possible random value to generate</param>
-        /// <param name="random">Random object</param>
-        /// <returns>A random value generated based on the specified characteristics</returns>
-        public static string RandomValue(int length, string value, Random random)
-        {
-            var randomValue = new string(Enumerable.Repeat(value, length).Select(s => s[random.Next(s.Length)]).ToArray());
-
-            return randomValue;
-
-        }
-
-        /// <summary>
-        /// Utility responsible of the random data generation 
-        /// </summary>
-        /// <returns>A list of Coordinates object randomly seeded</returns>
-        public static List<Coords> RandomDataGenerator()
-        {
-            var rnd = new Random();
-
-            List<Coords> worldMap = new List<Coords>();
-
-            int eventId = 0;
-
-            List<Ticket> tickets;
-
-            for (int i = -10; i <= 10; i = i + Int32.Parse(RandomValue(1, Constants.RandomIndexSet, rnd)))
-            {
-                for (int j = -10; j <= 10; j = j + Int32.Parse(RandomValue(1, Constants.RandomIndexSet, rnd)))
-                {
-                    eventId++;
-
-                    tickets = new List<Ticket>();
-                    int numberOfTickets = Int32.Parse(RandomValue(1, Constants.RandomValueSet, rnd));
-
-                    for (int k = 0; k < numberOfTickets; k++)
-                    {
-                        tickets.Add(new Ticket() { Price = Double.Parse(RandomPrice(2, rnd)) });
-
-                    }
-
-                    worldMap.Add(new Coords(i, j)
-                    {
-                        Event = new Event
-                        {
-                            ID = eventId.ToString(),
-                            Place = new Coords(i, j),
-                            Tickets = tickets
-                        }
-                    });
-                }
-            }
-
-            return worldMap;
-        }
-
         /// <summary>
         /// Evaluate the Manhattan distance between a specified point and all the points present in the speficied List
         /// </summary>
@@ -247,16 +153,16 @@ namespace TicketVendorSystem
         /// <param name="userY">USer y paramente</param>
         /// <param name="worldMap">The reference of the world Map object</param>
         /// <returns>A Dictionary<Coords, Double> where for each Key presents in the dictionary there is associated a value representing the distance prom the input value</returns>
-        public static Dictionary<Coords, Double> DistanceEvaluation(String userX, String userY, ref List<Coords> worldMap)
+        public static Dictionary<KeyValuePair<Coords, Event>, Double> DistanceEvaluation(String userX, String userY, ref Map worldMap)
         {
 
-            Dictionary<Coords, Double> events = new Dictionary<Coords, Double>();
+            Dictionary<KeyValuePair<Coords, Event>, Double> events = new Dictionary<KeyValuePair<Coords, Event>, Double>();
 
-            foreach (var ev in worldMap)
+            foreach (var ev in worldMap.World)
             {
                 //Distance evaluating
-                Double euclideanDistance = Math.Sqrt(Math.Pow(ev.x - Double.Parse(userX), 2) + Math.Pow(ev.y - Double.Parse(userY), 2));
-                Double manhattanDistance = Math.Abs(ev.x - Double.Parse(userX)) + Math.Abs(ev.y - Double.Parse(userY));
+                //Double euclideanDistance = Math.Sqrt(Math.Pow(ev.Key.x - Double.Parse(userX), 2) + Math.Pow(ev.Key.y - Double.Parse(userY), 2));
+                Double manhattanDistance = Math.Abs(ev.Key.x - Double.Parse(userX)) + Math.Abs(ev.Key.y - Double.Parse(userY));
                 events.Add(ev, manhattanDistance);
 
             }
