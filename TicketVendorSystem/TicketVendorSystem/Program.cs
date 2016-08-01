@@ -54,9 +54,7 @@ namespace TicketVendorSystem
             try
             {
                 //Map Creation
-                Map worldMap = new Map();
-                
-                //Random generation of seed data 
+                Map worldMap = Map.GetInstance();
                 worldMap.RandomDataGenerator();
 
                 //watch1.Stop();
