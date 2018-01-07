@@ -125,6 +125,7 @@ namespace TicketVendorSystem
                         ticketLowPrice,
                         ol.Key.Value.Place.x,
                         ol.Key.Value.Place.y,
+						
                         ol.Value
                     );
 
