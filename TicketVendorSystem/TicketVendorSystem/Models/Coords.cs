@@ -12,6 +12,7 @@ namespace TicketVendorSystem.Models
         public Double x { get; set; }
         public Double y { get; set; }
         //public Event Event { get; set; }
+		public bool isNavigatorOn { get; set; }
 
     }
 }
