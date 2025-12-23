@@ -16,3 +16,15 @@ _ReSharper.*
 *.user
 *.log
 packages
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS local caches / indices
+**/CopilotIndices/
+**/FileContentIndex/
+**/TestStore/
