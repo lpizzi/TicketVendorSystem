@@ -1,64 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TicketVendorSystem.Common;
 
 namespace TicketVendorSystem.Models
 {
+    /// <summary>
+    /// Singleton class representing the world map containing all events
+    /// </summary>
     public class Map
     {
         private Map() { }
 
         private static Map uniqueInstance;
         public Dictionary<Coords, Event> World { get; set; }
+
+        /// <summary>
+        /// Gets the singleton instance of the Map
+        /// </summary>
+        /// <returns>The single Map instance</returns>
         public static Map GetInstance()
         {
-            if (uniqueInstance == null) uniqueInstance = new Map();
+            if (uniqueInstance == null)
+            {
+                uniqueInstance = new Map();
+            }
 
             return uniqueInstance;
         }
 
+        /// <summary>
+        /// Generates random seed data populating the world with events and tickets
+        /// </summary>
         public void RandomDataGenerator()
         {
-            var rnd = new Random();
-
-            if (World == null)
+            if (World != null)
             {
-                World = new Dictionary<Coords, Event>();
+                return; // Already initialized
+            }
 
-                int eventId = 0;
+            World = new Dictionary<Coords, Event>();
+            var random = new Random();
+            int eventId = 0;
 
-                List<Ticket> tickets;
-
-                for (int i = -10; i <= 10; i = i + Int32.Parse(RandomGenerators.RandomValue(1, Constants.RandomIndexSet, rnd)))
+            // Generate events at random coordinates within world bounds
+            for (int i = Constants.WorldMinCoordinate; i <= Constants.WorldMaxCoordinate; 
+                i += int.Parse(RandomGenerators.RandomValue(1, Constants.RandomIndexSet, random)))
+            {
+                for (int j = Constants.WorldMinCoordinate; j <= Constants.WorldMaxCoordinate; 
+                    j += int.Parse(RandomGenerators.RandomValue(1, Constants.RandomIndexSet, random)))
                 {
-                    for (int j = -10; j <= 10; j = j + Int32.Parse(RandomGenerators.RandomValue(1, Constants.RandomIndexSet, rnd)))
+                    eventId++;
+
+                    // Generate random tickets for this event
+                    var tickets = new List<Ticket>();
+                    int numberOfTickets = int.Parse(RandomGenerators.RandomValue(1, Constants.RandomValueSet, random));
+
+                    for (int k = 0; k < numberOfTickets; k++)
                     {
-                        eventId++;
-
-                        tickets = new List<Ticket>();
-
-                        int numberOfTickets = Int32.Parse(RandomGenerators.RandomValue(1, Constants.RandomValueSet, rnd));
-
-                        for (int k = 0; k < numberOfTickets; k++)
-                        {
-                            tickets.Add(new Ticket() { Price = Double.Parse(RandomGenerators.RandomPrice(2, rnd)) });
-
-                        }
-
-                        var thisevent = new Event();
-                        thisevent.ID = eventId.ToString();
-                        thisevent.Place = new Coords(i, j);
-                        thisevent.Tickets = tickets;
-
-                        World.Add(new Coords(i, j), thisevent);
+                        tickets.Add(new Ticket 
+                        { 
+                            Price = double.Parse(RandomGenerators.RandomPrice(Constants.RandomTicketPriceDecimalPlaces, random)) 
+                        });
                     }
-                }
 
+                    // Create and add event to world
+                    var @event = new Event
+                    {
+                        ID = eventId.ToString(),
+                        Place = new Coords(i, j),
+                        Tickets = tickets
+                    };
+
+                    World.Add(new Coords(i, j), @event);
+                }
             }
         }
-
     }
 }

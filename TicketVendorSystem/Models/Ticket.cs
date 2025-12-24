@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace TicketVendorSystem.Models
 {
+    /// <summary>
+    /// Represents a ticket available for purchase at an event
+    /// </summary>
     public class Ticket
     {
-        //public String ID { get; set; }
-
-        //public String Name { get; set; }
-        public Double Price { get; set; }
+        /// <summary>
+        /// Gets or sets the price of this ticket in US Dollars
+        /// </summary>
+        public double Price { get; set; }
     }
 }
